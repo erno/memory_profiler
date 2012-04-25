@@ -8,7 +8,13 @@ import time, sys, os
 import linecache, inspect
 import subprocess
 
-if os.name == 'posix':
+if os.name == 'posix' and os.uname()[0] == 'Linux':
+    import resource
+    def _get_memory(pid, pagesize=resource.getpagesize()):
+        
+        return float(open("/proc/%d/statm" % pid).read().split(None, 2)[1]) * pagesize / 1024.0**2
+
+elif os.name == 'posix':
     def _get_memory(pid):
         # ..
         # .. memory usage in MB ..
